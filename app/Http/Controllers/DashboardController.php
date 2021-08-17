@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use PhpParser\Node\Expr\FuncCall;
 
 class DashboardController extends Controller
 {
@@ -12,7 +13,7 @@ class DashboardController extends Controller
      *
      * @return view
      */
-    public function calculate_sentence_number(Request $request)
+    public function show(Request $request)
     {
         // Init parameters
         $text = $request->input('txt');
@@ -21,8 +22,8 @@ class DashboardController extends Controller
 
         try
         {
-            // Calculate sum of 3 type of sentences contain '.' and '!' and '?'
-            $result = Str::substrCount($text, '.') + Str::substrCount($text, '؟') + Str::substrCount($text, '!');
+            // call calculate fucntion
+            $result = $this->calculate_sentence_number($text);
         }
         catch (\Exception $e) {
             // Throw exception if occor
@@ -35,6 +36,17 @@ class DashboardController extends Controller
 
         // send parameters to view
         return view('dashboard' , compact('result', 'text', 'msg'));
+    }
 
+    public Function calculate_sentence_number($text)
+    {
+        // Calculate count of sentence types contain '.' and '!' and '?' and ':'
+        $result = Str::substrCount($text, '.') 
+        + Str::substrCount($text, '؟') + 
+        + Str::substrCount($text, '?') + 
+        Str::substrCount($text, '!')+
+        Str::substrCount($text, ':');
+
+        return $result;
     }
 }
